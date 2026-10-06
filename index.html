@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>藏品讲解 · 蒲草编织</title>
+  <style>
+    /* 全局重置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background-color: #e9e6e1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+
+    /* 移动卡片模拟手机屏幕 */
+    .phone-frame {
+      width: 100%;
+      max-width: 390px;
+      height: 780px;
+      background-color: #ffffff;
+      border-radius: 36px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 主体内容区域 */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: #c0b7a8 #f0ebe3;
+      padding-bottom: 8px;
+      background: #fcfaf7;
+    }
+
+    .main-content::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .main-content::-webkit-scrollbar-track {
+      background: #f0ebe3;
+    }
+
+    .main-content::-webkit-scrollbar-thumb {
+      background-color: #c0b7a8;
+      border-radius: 8px;
+    }
+
+    /* 隐藏非激活页面 */
+    .page {
+      display: none;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ---------- 首页样式 ---------- */
+    .home-page {
+      padding: 18px 16px 8px 16px;
+    }
+
+    .home-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .home-header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #2c221b;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      margin-right: 8px;
+    }
+
+    .home-header .avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #d9cfc0;
+      border-radius: 50%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237a6e5d'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E");
+      background-size: 60%;
+      background-position: center 55%;
+      background-repeat: no-repeat;
+      border: 1px solid #e0d6c8;
+      flex-shrink: 0;
+    }
+
+    .banner {
+      background: linear-gradient(135deg, #cbb9a6 0%, #b8a48e 100%);
+      border-radius: 24px;
+      padding: 18px 18px;
+      margin-bottom: 22px;
+      box-shadow: 0 6px 14px rgba(120, 100, 80, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff9f2;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner::after {
+      content: "⚱️";
+      font-size: 70px;
+      position: absolute;
+      right: -5px;
+      bottom: -10px;
+      opacity: 0.25;
+      transform: rotate(10deg);
+      pointer-events: none;
+    }
+
+    .banner-text {
+      max-width: 70%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner-text h3 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      margin-bottom: 6px;
+    }
+
+    .banner-text p {
+      font-size: 13px;
+      opacity: 0.9;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    /* 分类标签 */
+    .categories {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: thin;
+      scrollbar-color: #d4c9bb #fcfaf7;
+    }
+
+    .categories::-webkit-scrollbar {
+      height: 3px;
+    }
+
+    .categories::-webkit-scrollbar-thumb {
+      background: #d4c9bb;
+      border-radius: 8px;
+    }
+
+    .category-item {
+      background: #ffffff;
+      border: 1px solid #e3dbd1;
+      border-radius: 40px;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #5a4e41;
+      white-space: nowrap;
+      transition: all 0.1s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      cursor: pointer;
+    }
+
+    .category-item.active {
+      background: #2c221b;
+      border-color: #2c221b;
+      color: #fcf7f0;
+      box-shadow: 0 6px 12px rgba(44, 34, 27, 0.15);
+    }
+
+    /* 藏品列表 */
+    .collection-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .list-item {
+      display: flex;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 12px 14px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02), 0 0 0 1px rgba(220, 210, 198, 0.5);
+      transition: transform 0.15s, box-shadow 0.2s;
+      align-items: center;
+    }
+
+    .list-item:active {
+      transform: scale(0.99);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .item-thumb {
+      width: 68px;
+      height: 68px;
+      background-color: #f0e8de;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-right: 14px;
+      flex-shrink: 0;
+      background-image: radial-gradient(circle at 20% 30%, #ffffff80 0%, transparent 70%);
+      border: 1px solid #e8dfd5;
+      box-shadow: inset 0 1px 3px #ffffff, 0 2px 6px rgba(0, 0, 0, 0.02);
+      overflow: hidden;
+    }
+
+    .item-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    .item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-info h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2c221b;
+      margin-bottom: 4px;
+      letter-spacing: -0.2px;
+    }
+
+    .item-info .meta {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: #867a6b;
+      font-weight: 400;
+      margin-bottom: 5px;
+    }
+
+    .item-info .meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .item-info .excerpt {
+      font-size: 12px;
+      color: #b0a496;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 170px;
+    }
+
+    .item-arrow {
+      color: #cbbfb0;
+      font-size: 20px;
+      margin-left: 8px;
+      font-weight: 300;
+    }
+
+    /* ---------- 探索页样式 ---------- */
+    .explore-page {
+      padding: 18px 18px 8px 18px;
+      background: #fcfaf7;
+      height: 100%;
+    }
+
+    /* 仅激活时使用 flex 纵向布局；未激活时由 .page 规则隐藏 (display:none) */
+    .explore-page.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .explore-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .explore-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #2c221b;
+    }
+
+    .explore-header .shuffle-badge {
+      background: #e8dfd5;
+      border-radius: 30px;
+      font-size: 12px;
+      padding: 4px 12px;
+      color: #6b5e4e;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+    }
+
+    /* 3D 展示区域 (模拟) */
+    .render-3d {
+      background: linear-gradient(145deg, #f5f0ea, #e2d9cf);
+      border-radius: 32px;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      position: relative;
+      box-shadow: inset 0 1px 6px #ffffff, 0 14px 24px -8px rgba(90, 75, 60, 0.25);
+      border: 1px solid #ddd2c4;
+      transition: all 0.2s ease;
+      overflow: hidden;
+    }
+
+    /* 图片展示模式 */
+    .render-3d .artifact-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 32px;
+    }
+
+    /* 3D 模拟元素 (保留) */
+    .render-3d .basket-3d {
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle at 30% 30%, #cfbc9f, #b59e81);
+      border-radius: 50% 50% 45% 45% / 60% 60% 35% 35%;
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25), inset -4px -8px 12px #735e4b, inset 6px 8px 12px #efdecb;
+      position: relative;
+      transform: rotateX(10deg) rotateY(-5deg);
+      border: 2px solid #a58d72;
+    }
+
+    .render-3d .basket-3d::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      width: 114px;
+      height: 114px;
+      border-radius: 50%;
+      background: #6e4f3a;
+      box-shadow: inset 0 0 12px #2c1e14, 0 0 0 2px #9c8369;
+      opacity: 0.9;
+    }
+
+    .render-3d .basket-3d::after {
+      content: "";
+      position: absolute;
+      top: 36px;
+      left: 36px;
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: #8b6b52;
+      box-shadow: inset 0 0 8px #2f2017, 0 0 0 2px #b1977b;
+      opacity: 0.9;
+    }
+
+    .render-3d .tag-3d {
+      position: absolute;
+      bottom: 12px;
+      right: 14px;
+      background: rgba(255, 255, 245, 0.85);
+      backdrop-filter: blur(4px);
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #584e44;
+      letter-spacing: 0.4px;
+      border: 1px solid #d6cbbc;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      z-index: 2;
+    }
+
+    .artifact-name {
+      font-size: 26px;
+      font-weight: 700;
+      color: #2c221b;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .key-fields {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .field-chip {
+      background: #ffffff;
+      border: 1px solid #e2d8cd;
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #4e4238;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .field-chip span {
+      font-weight: 400;
+      color: #9a8e80;
+    }
+
+    .description-box {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 18px 18px;
+      margin-bottom: 18px;
+      border: 1px solid #eae1d7;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .description-box p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #4b4038;
+      font-weight: 400;
+    }
+
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-top: auto;
+      margin-bottom: 8px;
+      padding: 6px 0;
+    }
+
+    .nav-btn {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid #ddd2c5;
+      border-radius: 60px;
+      padding: 14px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #4c3f34;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      transition: all 0.15s;
+      letter-spacing: 0.2px;
+    }
+
+    .nav-btn:active {
+      background: #f6f1eb;
+      transform: scale(0.97);
+      border-color: #cbbdae;
+    }
+
+    .nav-btn .arrow {
+      font-size: 20px;
+      font-weight: 300;
+    }
+
+    .nav-btn-center {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #f1ebe4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ddd2c5;
+      color: #6a5e51;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ---------- 底部 Tab 栏 ---------- */
+    .bottom-tab-bar {
+      height: 80px;
+      background: #ffffff;
+      border-top: 1px solid #ece4db;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 8px 18px 12px 18px;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.02);
+      flex-shrink: 0;
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: #b0a496;
+      font-size: 12px;
+      font-weight: 500;
+      transition: color 0.15s;
+      cursor: default;
+      width: 72px;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* 游戏入口为外链，点击态与其他 tab 保持一致 */
+    .tab-game {
+      cursor: pointer;
+    }
+
+    .tab-item .tab-icon {
+      font-size: 24px;
+      line-height: 1;
+      margin-bottom: 2px;
+      filter: grayscale(0.4);
+      transition: all 0.15s;
+    }
+
+    .tab-item.active {
+      color: #2c221b;
+    }
+
+    .tab-item.active .tab-icon {
+      filter: grayscale(0);
+      transform: translateY(-2px);
+    }
+
+    .extra-space {
+      height: 4px;
+    }
+
+    .demo-note {
+      font-size: 11px;
+      text-align: center;
+      color: #c2b7aa;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <!-- 主内容区域 -->
+    <div class="main-content" id="mainScroll">
+      <!-- 首页页面 -->
+      <div id="homePage" class="page active home-page">
+        <div class="home-header">
+          <h1>蒲草编织——指尖传承的千年浪漫</h1>
+          <div class="avatar"></div>
+        </div>
+
+        <!-- Banner -->
+        <div class="banner">
+          <div class="banner-text">
+            <h3>本期精选 · 十一件</h3>
+            <p>编织时光 · 手作之美</p>
+          </div>
+        </div>
+
+        <!-- 分类标签：全部 / 家具用品 / 生活用品 / 文创摆件 -->
+        <div class="categories">
+          <div class="category-item active">全部</div>
+          <div class="category-item">家具用品</div>
+          <div class="category-item">生活用品</div>
+          <div class="category-item">文创摆件</div>
+        </div>
+
+        <!-- 藏品列表 (新增抱枕，使用图片作为图标) -->
+        <div class="collection-list">
+          <!-- 新增的抱枕卡片 -->
+          <div class="list-item">
+            <div class="item-thumb">
+              <img src="images/baozhen.png" alt="蒲草编织抱枕">
+            </div>
+            <div class="item-info">
+              <h4>抱枕</h4>
+              <div class="meta"><span>🏷️ 家具用品</span></div>
+              <div class="excerpt">蒲草编织抱枕，天然手工编织…</div>
+            </div>
+            <div class="item-arrow">›</div>
+          </div>
+
+          <!-- 原有藏品保持不变，仅顺序微调 -->
+          <div class="list-item">
+            <div class="item-thumb">🧺</div>
+            <div class="item-info">
+              <h4>编织圆篮</h4>
+              <div class="meta"><span>🏷️ 生活用品</span></div>
+              <div class="excerpt">浅口编织篮，内衬暗红绒布…</div>
+            </div>
+            <div class="item-arrow">›</div>
+          </div>
+          <div class="list-item">
+            <div class="item-thumb">🏺</div>
+            <div class="item-info">
+              <h4>黑陶双耳罐</h4>
+              <div class="meta"><span>🏷️ 文创摆件</span></div>
+              <div class="excerpt">夹砂黑陶，双耳塑形古朴…</div>
+            </div>
+            <div class="item-arrow">›</div>
+          </div>
+          <div class="list-item">
+            <div class="item-thumb">🪙</div>
+            <div class="item-info">
+              <h4>铜胎画珐琅盘</h4>
+              <div class="meta"><span>🏷️ 家具用品</span></div>
+              <div class="excerpt">铜胎掐丝珐琅，缠枝莲纹…</div>
+            </div>
+            <div class="item-arrow">›</div>
+          </div>
+          <div class="list-item">
+            <div class="item-thumb">📜</div>
+            <div class="item-info">
+              <h4>山水人物折扇</h4>
+              <div class="meta"><span>🏷️ 文创摆件</span></div>
+              <div class="excerpt">纸本设色，山水人物雅致…</div>
+            </div>
+            <div class="item-arrow">›</div>
+          </div>
+          <div class="list-item">
+            <div class="item-thumb">🪡</div>
+            <div class="item-info">
+              <h4>刺绣荷包</h4>
+              <div class="meta"><span>🏷️ 生活用品</span></div>
+              <div class="excerpt">彩绣花卉纹，配色清丽…</div>
+            </div>
+            <div class="item-arrow">›</div>
+          </div>
+          <div class="list-item">
+            <div class="item-thumb">🪵</div>
+            <div class="item-info">
+              <h4>黄杨木雕笔筒</h4>
+              <div class="meta"><span>🏷️ 文创摆件</span></div>
+              <div class="excerpt">深浮雕松鹤，包浆温润…</div>
+            </div>
+            <div class="item-arrow">›</div>
+          </div>
+        </div>
+        <div class="demo-note">共计11件藏品 · 展示7件</div>
+        <div class="extra-space"></div>
+      </div>
+
+      <!-- 探索页面 (动态展示) -->
+      <div id="explorePage" class="page explore-page">
+        <div class="explore-header">
+          <h2>探索 · 编织圆篮</h2>
+          <div class="shuffle-badge">随机</div>
+        </div>
+
+        <!-- 3D / 图片展示区 由JS动态更改 -->
+        <div class="render-3d" id="render3DContainer">
+          <!-- 默认使用3D模拟（js会管理） -->
+          <div class="basket-3d" id="basket3D"></div>
+          <div class="tag-3d">3D 视图</div>
+        </div>
+
+        <div class="artifact-name" id="artifactName">编织圆篮</div>
+
+        <div class="key-fields" id="keyFields">
+          <div class="field-chip">材质 <span>草编/棉布</span></div>
+          <div class="field-chip">尺寸 <span>直径22cm</span></div>
+        </div>
+
+        <div class="description-box">
+          <p id="artifactDesc">
+            浅口圆形编织篮，由天然草茎盘绕而成，纹理粗犷而富有节奏。篮内衬有暗酒红色棉布软垫，
+            用于收纳细软或作为小型宠物的休憩之所。整体呈现质朴的手工温度与岁月感。
+          </p>
+        </div>
+
+        <div class="nav-controls">
+          <div class="nav-btn" id="prevBtn">
+            <span class="arrow">‹</span> 上一个
+          </div>
+          <div class="nav-btn-center" id="shuffleBtn">🎲</div>
+          <div class="nav-btn" id="nextBtn">
+            下一个 <span class="arrow">›</span>
+          </div>
+        </div>
+        <div class="demo-note" style="margin-top: 2px;">点击切换藏品 · 共11件</div>
+      </div>
+    </div>
+
+    <!-- 底部 tab 栏 -->
+    <div class="bottom-tab-bar">
+      <div class="tab-item active" id="tabHome">
+        <div class="tab-icon">🏠</div>
+        <span>首页</span>
+      </div>
+      <div class="tab-item" id="tabExplore">
+        <div class="tab-icon">🔍</div>
+        <span>探索</span>
+      </div>
+      <a class="tab-item tab-game" id="tabGame"
+         href="https://www.lingguang.com/share/FLASH_APP-98a85a56-a849-40ab-9422-42ccc75f49a419?sharemedium=wechat"
+         target="_blank" rel="noopener noreferrer">
+        <div class="tab-icon">🎮</div>
+        <span>游戏</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const homePage = document.getElementById('homePage');
+      const explorePage = document.getElementById('explorePage');
+      const tabHome = document.getElementById('tabHome');
+      const tabExplore = document.getElementById('tabExplore');
+      const mainScroll = document.getElementById('mainScroll');
+
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const shuffleBtn = document.getElementById('shuffleBtn');
+
+      // 包含抱枕在内的完整藏品数据（共11件）
+      const artifacts = [
+        { 
+          name: '编织圆篮', 
+          era: '民初', 
+          material: '草编/棉布', 
+          size: '直径22cm',
+          desc: '浅口圆形编织篮，由天然草茎盘绕而成，纹理粗犷而富有节奏。篮内衬有暗酒红色棉布软垫，用于收纳细软或作为小型宠物的休憩之所。整体呈现质朴的手工温度与岁月感。',
+          type: '3d'  // 保留3D模拟
+        },
+        { 
+          name: '抱枕', 
+          era: '当代', 
+          material: '蒲草/蓝染棉布', 
+          size: '45cm × 45cm',
+          desc: '蒲草编织抱枕，以天然蒲草手工编织而成，编织肌理细密质朴。抱枕四周搭配蓝调条纹布艺包边，层次分明。既可倚靠承托，柔化居家空间，也作为软装陈设点缀家居。整体流露自然朴素的手工温度与沉静质感。',
+          type: 'image',
+          image: 'images/baozhen.png'
+        },
+        { 
+          name: '黑陶双耳罐', 
+          era: '战国', 
+          material: '夹砂黑陶', 
+          size: '高18cm',
+          desc: '泥质夹砂黑陶，双耳对称，器表磨光。肩部饰有弦纹，造型古朴稳重，为典型战国时期生活用器，体现早期陶艺的实用与审美结合。',
+          type: '3d'
+        },
+        { 
+          name: '铜胎画珐琅盘', 
+          era: '清中期', 
+          material: '铜胎珐琅', 
+          size: '口径15cm',
+          desc: '铜胎掐丝珐琅工艺，盘心绘缠枝莲纹，色彩艳丽，釉面莹润。外壁施浅蓝釉，底部有“乾隆年制”款，彰显宫廷雅趣。',
+          type: '3d'
+        },
+        { 
+          name: '山水人物折扇', 
+          era: '近现代', 
+          material: '纸本设色', 
+          size: '扇骨长32cm',
+          desc: '纸本设色山水人物扇面，远山近水，人物闲适。笔法细腻，设色清雅，展现文人雅士的悠然心境，为案头清玩之佳品。',
+          type: '3d'
+        },
+        { 
+          name: '刺绣荷包', 
+          era: '晚清', 
+          material: '丝质彩绣', 
+          size: '宽10cm',
+          desc: '彩色丝线绣制花卉纹荷包，配色娇艳而不失雅致。针脚细密，荷包造型饱满，配有流苏，为传统服饰中精巧的佩饰。',
+          type: '3d'
+        },
+        { 
+          name: '黄杨木雕笔筒', 
+          era: '清早', 
+          material: '黄杨木', 
+          size: '高12cm',
+          desc: '黄杨木雕笔筒，深浮雕松鹤延年图案，刀法深峻，层次丰富。木质包浆温润，为文房案头增添古朴气息。',
+          type: '3d'
+        },
+        { 
+          name: '青瓷莲瓣碗', 
+          era: '南宋', 
+          material: '青瓷', 
+          size: '口径16cm',
+          desc: '青瓷碗，外壁刻莲瓣纹，釉色青绿莹润，底部有支烧痕迹。造型端庄，为龙泉窑系经典器物，体现宋人简约清雅的审美。',
+          type: '3d'
+        },
+        { 
+          name: '错金银带钩', 
+          era: '西汉', 
+          material: '青铜/金银', 
+          size: '长14cm',
+          desc: '青铜带钩，表面错金银云气纹，工艺精湛。钩首为兽形，整体纹饰流畅，为古代贵族服饰中兼具实用与装饰的珍品。',
+          type: '3d'
+        },
+        { 
+          name: '竹雕笔洗', 
+          era: '明末', 
+          material: '竹根', 
+          size: '直径9cm',
+          desc: '竹根雕笔洗，随形而作，口沿呈荷叶卷曲状。包浆红润，雕工简练，深得文人竹刻之趣，极为难得。',
+          type: '3d'
+        },
+        { 
+          name: '铜佛坐像', 
+          era: '明', 
+          material: '青铜', 
+          size: '高21cm',
+          desc: '青铜佛坐像，结跏趺坐于莲座之上，面容慈祥，衣纹流畅。包浆自然，具有明代汉传佛教造像的典型特征。',
+          type: '3d'
+        }
+      ];
+
+      let currentIndex = 0;
+
+      // 获取展示容器
+      const render3DContainer = document.getElementById('render3DContainer');
+      const artifactNameEl = document.getElementById('artifactName');
+      const keyFieldsEl = document.getElementById('keyFields');
+      const artifactDescEl = document.getElementById('artifactDesc');
+
+      // 更新探索页展示
+      function updateExploreArtifact(index) {
+        const total = artifacts.length;
+        if (index < 0) index = total - 1;
+        if (index >= total) index = 0;
+        currentIndex = index;
+
+        const artifact = artifacts[currentIndex];
+
+        // 更新标题
+        const exploreHeaderH2 = document.querySelector('#explorePage .explore-header h2');
+        if (exploreHeaderH2) {
+          exploreHeaderH2.textContent = `探索 · ${artifact.name}`;
+        }
+
+        // 更新名称
+        artifactNameEl.textContent = artifact.name;
+
+        // 更新字段
+        keyFieldsEl.innerHTML = `
+          <div class="field-chip">材质 <span>${artifact.material}</span></div>
+          <div class="field-chip">尺寸 <span>${artifact.size}</span></div>
+        `;
+
+        // 更新描述
+        artifactDescEl.textContent = artifact.desc;
+
+        // 根据类型更新展示区域 (3D 或 图片)
+        if (artifact.type === 'image' && artifact.image) {
+          render3DContainer.innerHTML = `
+            <img class="artifact-image" src="${artifact.image}" alt="${artifact.name}">
+            <div class="tag-3d">图片展示</div>
+          `;
+        } else {
+          // 默认3D模拟视图
+          render3DContainer.innerHTML = `
+            <div class="basket-3d"></div>
+            <div class="tag-3d">3D 视图</div>
+          `;
+        }
+      }
+
+      function resetScrollTop() {
+        mainScroll.scrollTop = 0;
+        // display 切换后浏览器可能在重新布局时修正滚动位置，下一帧再归零一次
+        requestAnimationFrame(function() { mainScroll.scrollTop = 0; });
+      }
+
+      function showHome() {
+        homePage.classList.add('active');
+        explorePage.classList.remove('active');
+        tabHome.classList.add('active');
+        tabExplore.classList.remove('active');
+        resetScrollTop();
+      }
+
+      function showExplore() {
+        homePage.classList.remove('active');
+        explorePage.classList.add('active');
+        tabHome.classList.remove('active');
+        tabExplore.classList.add('active');
+        resetScrollTop();
+        updateExploreArtifact(currentIndex);
+      }
+
+      tabHome.addEventListener('click', showHome);
+      tabExplore.addEventListener('click', showExplore);
+
+      prevBtn.addEventListener('click', function() {
+        updateExploreArtifact(currentIndex - 1);
+      });
+
+      nextBtn.addEventListener('click', function() {
+        updateExploreArtifact(currentIndex + 1);
+      });
+
+      shuffleBtn.addEventListener('click', function() {
+        let newIndex = Math.floor(Math.random() * artifacts.length);
+        while (newIndex === currentIndex && artifacts.length > 1) {
+          newIndex = Math.floor(Math.random() * artifacts.length);
+        }
+        updateExploreArtifact(newIndex);
+      });
+
+      // 点击列表项跳转到探索页并显示对应藏品
+      const listItems = document.querySelectorAll('.list-item');
+      listItems.forEach((item, idx) => {
+        item.addEventListener('click', function() {
+          // 根据列表项顺序映射到artifacts索引：前7个列表对应前7个藏品（0-6），但注意列表顺序与artifacts顺序一致
+          // 但我们的列表顺序: 抱枕(0), 编织圆篮(1), 黑陶双耳罐(2), 铜胎画珐琅盘(3), 山水人物折扇(4), 刺绣荷包(5), 黄杨木雕笔筒(6)
+          // 而artifacts顺序: 编织圆篮(0), 抱枕(1), 黑陶双耳罐(2), 铜胎画珐琅盘(3), 山水人物折扇(4), 刺绣荷包(5), 黄杨木雕笔筒(6)...
+          // 为了点击正确，我们根据名称映射，更稳健。
+          const nameEl = item.querySelector('.item-info h4');
+          if (nameEl) {
+            const itemName = nameEl.textContent.trim();
+            const artifactIndex = artifacts.findIndex(a => a.name === itemName);
+            if (artifactIndex !== -1) {
+              currentIndex = artifactIndex;
+              showExplore();
+              mainScroll.scrollTop = 0;
+              return;
+            }
+          }
+          // fallback：按索引，但映射可能不正确，只作为备用
+          const fallbackMap = [1, 0, 2, 3, 4, 5, 6]; // 列表顺序对应artifacts索引
+          if (idx < fallbackMap.length) {
+            currentIndex = fallbackMap[idx];
+            showExplore();
+            mainScroll.scrollTop = 0;
+          }
+        });
+      });
+
+      // 分类标签筛选（全部 / 家具用品 / 生活用品 / 文创摆件）
+      const categoryItems = document.querySelectorAll('.category-item');
+      const homeDemoNote = document.querySelector('#homePage .demo-note');
+      categoryItems.forEach(function(cat) {
+        cat.addEventListener('click', function() {
+          categoryItems.forEach(function(c) { c.classList.remove('active'); });
+          cat.classList.add('active');
+          const catName = cat.textContent.trim();
+          let visible = 0;
+          listItems.forEach(function(item) {
+            const spanEl = item.querySelector('.meta span');
+            const itemCat = spanEl ? spanEl.textContent.replace('🏷️', '').trim() : '';
+            const show = (catName === '全部' || itemCat === catName);
+            item.style.display = show ? '' : 'none';
+            if (show) visible++;
+          });
+          if (homeDemoNote) {
+            homeDemoNote.textContent = (catName === '全部')
+              ? '共计11件藏品 · 展示7件'
+              : catName + ' · ' + visible + ' 件';
+          }
+          mainScroll.scrollTop = 0;
+        });
+      });
+
+      // 初始化默认显示编织圆篮(索引0)
+      updateExploreArtifact(0);
+    })();
+  </script>
+</body>
+</html>
