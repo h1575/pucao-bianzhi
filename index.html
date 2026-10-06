@@ -122,15 +122,16 @@
       overflow: hidden;
     }
 
-    .banner::after {
-      content: "⚱️";
-      font-size: 70px;
-      position: absolute;
-      right: -5px;
-      bottom: -10px;
-      opacity: 0.25;
-      transform: rotate(10deg);
-      pointer-events: none;
+    .banner-logo {
+      height: 78px;
+      width: auto;
+      border-radius: 14px;
+      background: #fff;
+      padding: 4px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
     }
 
     .banner-text {
@@ -340,8 +341,10 @@
     .render-3d .artifact-image {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       border-radius: 32px;
+      padding: 12px;
+      box-sizing: border-box;
     }
 
     /* 3D 模拟元素 (保留) */
@@ -579,9 +582,10 @@
         <!-- Banner -->
         <div class="banner">
           <div class="banner-text">
-            <h3>本期精选 · 十一件</h3>
+            <h3>本期精选</h3>
             <p>编织时光 · 手作之美</p>
           </div>
+          <img class="banner-logo" src="images/logo.png" alt="再相厢商标">
         </div>
 
         <!-- 分类标签：全部 / 家具用品 / 生活用品 / 文创摆件 -->
@@ -609,68 +613,80 @@
 
           <!-- 原有藏品保持不变，仅顺序微调 -->
           <div class="list-item">
-            <div class="item-thumb">🧺</div>
+            <div class="item-thumb">
+              <img src="images/shuitongbao.png" alt="圆形水桶包" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">
+            </div>
             <div class="item-info">
-              <h4>编织圆篮</h4>
+              <h4>圆形水桶包</h4>
               <div class="meta"><span>🏷️ 生活用品</span></div>
-              <div class="excerpt">浅口编织篮，内衬暗红绒布…</div>
+              <div class="excerpt">蒲草编织水桶包，天然手工编织…</div>
             </div>
             <div class="item-arrow">›</div>
           </div>
           <div class="list-item">
-            <div class="item-thumb">🏺</div>
+            <div class="item-thumb">
+              <img src="images/maowo.png" alt="猫窝" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">
+            </div>
             <div class="item-info">
-              <h4>黑陶双耳罐</h4>
+              <h4>猫窝</h4>
               <div class="meta"><span>🏷️ 文创摆件</span></div>
-              <div class="excerpt">夹砂黑陶，双耳塑形古朴…</div>
+              <div class="excerpt">蒲草编织宠物窝，鲁锦软垫…</div>
             </div>
             <div class="item-arrow">›</div>
           </div>
           <div class="list-item">
-            <div class="item-thumb">🪙</div>
+            <div class="item-thumb">
+              <img src="images/zhuodian.png" alt="桌垫" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">
+            </div>
             <div class="item-info">
-              <h4>铜胎画珐琅盘</h4>
+              <h4>桌垫</h4>
               <div class="meta"><span>🏷️ 家具用品</span></div>
-              <div class="excerpt">铜胎掐丝珐琅，缠枝莲纹…</div>
+              <div class="excerpt">蒲草圆餐垫，鲁锦镶边…</div>
             </div>
             <div class="item-arrow">›</div>
           </div>
           <div class="list-item">
-            <div class="item-thumb">📜</div>
+            <div class="item-thumb">
+              <img src="images/xiangkuang.png" alt="相框" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">
+            </div>
             <div class="item-info">
-              <h4>山水人物折扇</h4>
+              <h4>相框</h4>
               <div class="meta"><span>🏷️ 文创摆件</span></div>
-              <div class="excerpt">纸本设色，山水人物雅致…</div>
+              <div class="excerpt">蒲草囍字框画，鲁锦镶边…</div>
             </div>
             <div class="item-arrow">›</div>
           </div>
           <div class="list-item">
-            <div class="item-thumb">🪡</div>
+            <div class="item-thumb">
+              <img src="images/shatamao.png" alt="沙滩帽" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">
+            </div>
             <div class="item-info">
-              <h4>刺绣荷包</h4>
+              <h4>沙滩帽</h4>
               <div class="meta"><span>🏷️ 生活用品</span></div>
-              <div class="excerpt">彩绣花卉纹，配色清丽…</div>
+              <div class="excerpt">蒲草编织礼帽，鲁锦镶边…</div>
             </div>
             <div class="item-arrow">›</div>
           </div>
           <div class="list-item">
-            <div class="item-thumb">🪵</div>
+            <div class="item-thumb">
+              <img src="images/xiangnang.png" alt="香囊" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">
+            </div>
             <div class="item-info">
-              <h4>黄杨木雕笔筒</h4>
+              <h4>香囊</h4>
               <div class="meta"><span>🏷️ 文创摆件</span></div>
-              <div class="excerpt">深浮雕松鹤，包浆温润…</div>
+              <div class="excerpt">福字挂饰，中国结流苏坠件…</div>
             </div>
             <div class="item-arrow">›</div>
           </div>
         </div>
-        <div class="demo-note">共计11件藏品 · 展示7件</div>
+        <div class="demo-note">共7件藏品</div>
         <div class="extra-space"></div>
       </div>
 
       <!-- 探索页面 (动态展示) -->
       <div id="explorePage" class="page explore-page">
         <div class="explore-header">
-          <h2>探索 · 编织圆篮</h2>
+          <h2>探索 · 圆形水桶包</h2>
           <div class="shuffle-badge">随机</div>
         </div>
 
@@ -681,16 +697,16 @@
           <div class="tag-3d">3D 视图</div>
         </div>
 
-        <div class="artifact-name" id="artifactName">编织圆篮</div>
+        <div class="artifact-name" id="artifactName">圆形水桶包</div>
 
         <div class="key-fields" id="keyFields">
-          <div class="field-chip">材质 <span>草编/棉布</span></div>
+          <div class="field-chip">材质 <span>草编/鲁锦</span></div>
           <div class="field-chip">尺寸 <span>直径22cm</span></div>
         </div>
 
         <div class="description-box">
           <p id="artifactDesc">
-            浅口圆形编织篮，由天然草茎盘绕而成，纹理粗犷而富有节奏。篮内衬有暗酒红色棉布软垫，
+            浅口圆形编织篮，由天然草茎盘绕而成，纹理粗犷而富有节奏。篮内衬有暗酒红色鲁锦软垫，
             用于收纳细软或作为小型宠物的休憩之所。整体呈现质朴的手工温度与岁月感。
           </p>
         </div>
@@ -704,7 +720,7 @@
             下一个 <span class="arrow">›</span>
           </div>
         </div>
-        <div class="demo-note" style="margin-top: 2px;">点击切换藏品 · 共11件</div>
+        <div class="demo-note" style="margin-top: 2px;">点击切换藏品</div>
       </div>
     </div>
 
@@ -741,94 +757,68 @@
 
       // 包含抱枕在内的完整藏品数据（共11件）
       const artifacts = [
-        { 
-          name: '编织圆篮', 
-          era: '民初', 
-          material: '草编/棉布', 
-          size: '直径22cm',
-          desc: '浅口圆形编织篮，由天然草茎盘绕而成，纹理粗犷而富有节奏。篮内衬有暗酒红色棉布软垫，用于收纳细软或作为小型宠物的休憩之所。整体呈现质朴的手工温度与岁月感。',
-          type: '3d'  // 保留3D模拟
+        {
+          name: '圆形水桶包',
+          era: '民初',
+          material: '蒲草/鲁锦',
+          size: '包身直径约30cm',
+          desc: '蒲草编织水桶包，以天然蒲草手工编织而成，编织肌理细密质朴。包口环绕鲁锦镶边，纹样交错灵动，层次分明。既可手提收纳随身物件，适配出行日常，也可作为软装陈设点缀空间。整体流露自然朴素的手工温度与复古民族质感。',
+          type: 'image',
+          image: 'images/shuitongbao.png'
         },
         { 
           name: '抱枕', 
           era: '当代', 
-          material: '蒲草/蓝染棉布', 
+          material: '蒲草/鲁锦', 
           size: '45cm × 45cm',
-          desc: '蒲草编织抱枕，以天然蒲草手工编织而成，编织肌理细密质朴。抱枕四周搭配蓝调条纹布艺包边，层次分明。既可倚靠承托，柔化居家空间，也作为软装陈设点缀家居。整体流露自然朴素的手工温度与沉静质感。',
+          desc: '蒲草编织抱枕，以天然蒲草手工编织而成，编织肌理细密质朴。抱枕四周搭配鲁锦包边，层次分明。既可倚靠承托，柔化居家空间，也作为软装陈设点缀家居。整体流露自然朴素的手工温度与沉静质感。',
           type: 'image',
           image: 'images/baozhen.png'
         },
-        { 
-          name: '黑陶双耳罐', 
-          era: '战国', 
-          material: '夹砂黑陶', 
-          size: '高18cm',
-          desc: '泥质夹砂黑陶，双耳对称，器表磨光。肩部饰有弦纹，造型古朴稳重，为典型战国时期生活用器，体现早期陶艺的实用与审美结合。',
-          type: '3d'
+        {
+          name: '猫窝',
+          era: '现代',
+          material: '蒲草/鲁锦',
+          size: '直径约40cm',
+          desc: '蒲草编织宠物窝，以天然蒲草手工编织而成，编织肌理紧实质朴。窝内搭配复古鲁锦软垫，色彩层次丰富。既可供宠物蜷卧休憩，柔化居家空间，也可作为软装陈设点缀家居。整体流露自然朴素的手工温度与沉静质感。',
+          type: 'image',
+          image: 'images/maowo.png'
         },
-        { 
-          name: '铜胎画珐琅盘', 
-          era: '清中期', 
-          material: '铜胎珐琅', 
-          size: '口径15cm',
-          desc: '铜胎掐丝珐琅工艺，盘心绘缠枝莲纹，色彩艳丽，釉面莹润。外壁施浅蓝釉，底部有“乾隆年制”款，彰显宫廷雅趣。',
-          type: '3d'
+        {
+          name: '桌垫',
+          era: '现代',
+          material: '蒲草/鲁锦',
+          size: '直径约35cm',
+          desc: '蒲草编织圆餐垫，以天然蒲草手工编织而成，编织肌理细密质朴。垫身边缘环绕鲁锦镶边，纹样错落灵动，层次分明。既可摆放杯盘隔热护桌，适配日常餐厨，也可作为软装陈设点缀空间。整体流露自然朴素的手工温度与复古民族质感。',
+          type: 'image',
+          image: 'images/zhuodian.png'
         },
-        { 
-          name: '山水人物折扇', 
-          era: '近现代', 
-          material: '纸本设色', 
-          size: '扇骨长32cm',
-          desc: '纸本设色山水人物扇面，远山近水，人物闲适。笔法细腻，设色清雅，展现文人雅士的悠然心境，为案头清玩之佳品。',
-          type: '3d'
+        {
+          name: '相框',
+          era: '现代',
+          material: '蒲草/鲁锦织锦',
+          size: '约30cm × 30cm',
+          desc: '蒲草囍字框画，以天然蒲草手工编织而成，编织肌理紧实质朴。画面编织红色囍字纹样，四周搭配鲁锦镶边，民俗色彩层次丰富。既可作为桌面装饰摆件，烘托喜庆氛围，柔化室内空间，也可作为伴手礼陈设点缀家居。整体流露自然朴素的手工温度与沉静质感。',
+          type: 'image',
+          image: 'images/xiangkuang.png'
         },
-        { 
-          name: '刺绣荷包', 
-          era: '晚清', 
-          material: '丝质彩绣', 
-          size: '宽10cm',
-          desc: '彩色丝线绣制花卉纹荷包，配色娇艳而不失雅致。针脚细密，荷包造型饱满，配有流苏，为传统服饰中精巧的佩饰。',
-          type: '3d'
+        {
+          name: '沙滩帽',
+          era: '现代',
+          material: '蒲草/鲁锦',
+          size: '帽檐直径约38cm',
+          desc: '蒲草编织礼帽，以天然蒲草手工编织而成，编织肌理细密质朴。帽身环绕鲁锦镶边，帽沿搭配撞色纹样包边，纹样错落灵动，层次分明。既可穿戴遮阳修饰造型，适配日常出行，也可作为软装陈设点缀空间。整体流露自然朴素的手工温度与复古民族质感。',
+          type: 'image',
+          image: 'images/shatamao.png'
         },
-        { 
-          name: '黄杨木雕笔筒', 
-          era: '清早', 
-          material: '黄杨木', 
-          size: '高12cm',
-          desc: '黄杨木雕笔筒，深浮雕松鹤延年图案，刀法深峻，层次丰富。木质包浆温润，为文房案头增添古朴气息。',
-          type: '3d'
-        },
-        { 
-          name: '青瓷莲瓣碗', 
-          era: '南宋', 
-          material: '青瓷', 
-          size: '口径16cm',
-          desc: '青瓷碗，外壁刻莲瓣纹，釉色青绿莹润，底部有支烧痕迹。造型端庄，为龙泉窑系经典器物，体现宋人简约清雅的审美。',
-          type: '3d'
-        },
-        { 
-          name: '错金银带钩', 
-          era: '西汉', 
-          material: '青铜/金银', 
-          size: '长14cm',
-          desc: '青铜带钩，表面错金银云气纹，工艺精湛。钩首为兽形，整体纹饰流畅，为古代贵族服饰中兼具实用与装饰的珍品。',
-          type: '3d'
-        },
-        { 
-          name: '竹雕笔洗', 
-          era: '明末', 
-          material: '竹根', 
-          size: '直径9cm',
-          desc: '竹根雕笔洗，随形而作，口沿呈荷叶卷曲状。包浆红润，雕工简练，深得文人竹刻之趣，极为难得。',
-          type: '3d'
-        },
-        { 
-          name: '铜佛坐像', 
-          era: '明', 
-          material: '青铜', 
-          size: '高21cm',
-          desc: '青铜佛坐像，结跏趺坐于莲座之上，面容慈祥，衣纹流畅。包浆自然，具有明代汉传佛教造像的典型特征。',
-          type: '3d'
+        {
+          name: '香囊',
+          era: '现代',
+          material: '蒲草/中国结/流苏',
+          size: '直径约15cm',
+          desc: '蒲草编织福字挂饰，以天然蒲草手工编织而成，编织肌理紧实质朴。搭配传统中国结绳艺、福字贴饰与流苏坠件，红白色彩对比鲜明。既可作为节庆挂饰装点空间，传递纳福吉祥的美好寓意，也可作为文创摆件点缀家居。整体流露自然朴素的手工温度与传统民俗韵味。',
+          type: 'image',
+          image: 'images/xiangnang.png'
         }
       ];
 
@@ -929,8 +919,8 @@
       listItems.forEach((item, idx) => {
         item.addEventListener('click', function() {
           // 根据列表项顺序映射到artifacts索引：前7个列表对应前7个藏品（0-6），但注意列表顺序与artifacts顺序一致
-          // 但我们的列表顺序: 抱枕(0), 编织圆篮(1), 黑陶双耳罐(2), 铜胎画珐琅盘(3), 山水人物折扇(4), 刺绣荷包(5), 黄杨木雕笔筒(6)
-          // 而artifacts顺序: 编织圆篮(0), 抱枕(1), 黑陶双耳罐(2), 铜胎画珐琅盘(3), 山水人物折扇(4), 刺绣荷包(5), 黄杨木雕笔筒(6)...
+          // 但我们的列表顺序: 抱枕(0), 圆形水桶包(1), 猫窝(2), 桌垫(3), 相框(4), 沙滩帽(5), 香囊(6)
+          // 而artifacts顺序: 圆形水桶包(0), 抱枕(1), 猫窝(2), 桌垫(3), 相框(4), 沙滩帽(5), 香囊(6)...
           // 为了点击正确，我们根据名称映射，更稳健。
           const nameEl = item.querySelector('.item-info h4');
           if (nameEl) {
@@ -971,7 +961,7 @@
           });
           if (homeDemoNote) {
             homeDemoNote.textContent = (catName === '全部')
-              ? '共计11件藏品 · 展示7件'
+              ? '共7件藏品'
               : catName + ' · ' + visible + ' 件';
           }
           mainScroll.scrollTop = 0;
