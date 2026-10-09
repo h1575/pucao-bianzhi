@@ -1339,11 +1339,7 @@
           </div>
           <span class="h-audio-time" id="historyAudioDur">0:00</span>
         </div>
-        <audio id="historyAudio" preload="metadata">
-          <source src="images/history-voice.m4a" type="audio/mp4">
-          <source src="images/history-voice.m4a" type="audio/x-m4a">
-          <source src="images/history-voice.m4a">
-        </audio>
+        <audio id="historyAudio" preload="auto" src="images/history-voice.m4a"></audio>
         <div class="h-subtitle">一茎青蒲，千年织史</div>
         <div class="h-intro">
           蒲草，古称"莞"，又名香蒲、水烛，多生于河湖沼泽湿地，茎叶修长柔韧，经收割、晾晒、浸泡捶打之后，纤维绵软结实，是华夏大地上最古老的编织原料之一。自远古先民采摘水草开始，这株生长于水边的野草，穿越数千年岁月，从生存工具走向礼仪重器，再到寻常百姓家的日用器物，如今作为非物质文化遗产，在当代文创之中重获新生。
@@ -1709,23 +1705,29 @@
       }
 
       if (audioBtn && audioEl) {
+        // 预加载
+        audioEl.load();
+
         audioBtn.addEventListener('click', function () {
           if (audioEl.paused) {
+            // 先 load 确保资源就绪
+            audioEl.load();
             var p = audioEl.play();
             if (p && p.then) {
               p.then(function () {
                 audioBtn.classList.add('playing');
                 audioBar.classList.add('show');
               }).catch(function (err) {
-                // 显示具体错误
                 var errMsg = '播放失败: ' + (err && err.name ? err.name : '未知');
                 if (audioEl.error) {
                   errMsg += ' (code:' + audioEl.error.code + ')';
                 }
                 audioCur.textContent = errMsg;
                 audioBar.classList.add('show');
+                // 3秒后如果还暂停，尝试重新加载
                 setTimeout(function () {
                   if (audioEl.paused) {
+                    audioEl.load();
                     audioCur.textContent = '0:00';
                   }
                 }, 3000);
