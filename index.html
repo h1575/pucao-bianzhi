@@ -279,6 +279,50 @@
     .h-audio-btn.playing .icon-pause rect {
       fill: #fbf4e4;
     }
+    .h-audio-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 0 4px;
+    }
+    .h-audio-bar.show { display: flex; }
+    .h-audio-time {
+      font-size: 11px;
+      color: #867a6b;
+      min-width: 32px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .h-audio-track {
+      flex: 1;
+      height: 4px;
+      background: #e3dbd1;
+      border-radius: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+    .h-audio-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: #446248;
+      border-radius: 2px;
+      width: 0%;
+    }
+    .h-audio-thumb {
+      position: absolute;
+      left: 0%;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #446248;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
     .history-content .h-subtitle {
       font-size: 12px;
       color: #867a6b;
@@ -1276,7 +1320,7 @@
       <div class="history-content">
         <div class="h-title-row">
           <h2>蒲草 · 千年织史</h2>
-          <button class="h-audio-btn" id="historyAudioBtn" title="AI 朗读">
+          <button class="h-audio-btn" id="historyAudioBtn" title="播放朗读">
             <svg class="icon-play" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M11 5L6 9H3v6h3l5 4V5z" fill="#446248"/>
               <path d="M15.5 8.5c1 1 1 6 0 7M18 6c2 2 2 10 0 12" stroke="#446248" stroke-width="1.8" stroke-linecap="round" fill="none"/>
@@ -1287,6 +1331,15 @@
             </svg>
           </button>
         </div>
+        <div class="h-audio-bar" id="historyAudioBar">
+          <span class="h-audio-time" id="historyAudioCur">0:00</span>
+          <div class="h-audio-track" id="historyAudioTrack">
+            <div class="h-audio-fill" id="historyAudioFill"></div>
+            <div class="h-audio-thumb" id="historyAudioThumb"></div>
+          </div>
+          <span class="h-audio-time" id="historyAudioDur">0:00</span>
+        </div>
+        <audio id="historyAudio" preload="metadata" src="images/history-voice.m4a"></audio>
         <div class="h-subtitle">一茎青蒲，千年织史</div>
         <div class="h-intro">
           蒲草，古称"莞"，又名香蒲、水烛，多生于河湖沼泽湿地，茎叶修长柔韧，经收割、晾晒、浸泡捶打之后，纤维绵软结实，是华夏大地上最古老的编织原料之一。自远古先民采摘水草开始，这株生长于水边的野草，穿越数千年岁月，从生存工具走向礼仪重器，再到寻常百姓家的日用器物，如今作为非物质文化遗产，在当代文创之中重获新生。
@@ -1625,104 +1678,102 @@
       if (historyBack && historyOverlay) {
         historyBack.addEventListener('click', function () {
           historyOverlay.classList.remove('active');
-          // 停止朗读
-          if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
+          var au = document.getElementById('historyAudio');
           var ab = document.getElementById('historyAudioBtn');
+          var bar = document.getElementById('historyAudioBar');
+          if (au) { au.pause(); au.currentTime = 0; }
           if (ab) { ab.classList.remove('playing'); }
+          if (bar) { bar.classList.remove('show'); }
         });
       }
 
-      // AI 朗读
+      // 真实音频播放 + 可拖动进度条
       var audioBtn = document.getElementById('historyAudioBtn');
-      var isPlaying = false;
-      var zhVoice = null;
+      var audioEl = document.getElementById('historyAudio');
+      var audioBar = document.getElementById('historyAudioBar');
+      var audioFill = document.getElementById('historyAudioFill');
+      var audioThumb = document.getElementById('historyAudioThumb');
+      var audioCur = document.getElementById('historyAudioCur');
+      var audioDur = document.getElementById('historyAudioDur');
+      var audioTrack = document.getElementById('historyAudioTrack');
 
-      // 加载中文语音（移动端需要监听 voiceschanged）
-      function loadVoices() {
-        var voices = window.speechSynthesis.getVoices();
-        for (var i = 0; i < voices.length; i++) {
-          if (voices[i].lang.indexOf('zh') === 0) {
-            zhVoice = voices[i];
-            break;
-          }
-        }
-      }
-      if (window.speechSynthesis) {
-        loadVoices();
-        window.speechSynthesis.onvoiceschanged = loadVoices;
+      function fmtTime(s) {
+        if (!s || isNaN(s)) return '0:00';
+        var m = Math.floor(s / 60);
+        var sec = Math.floor(s % 60);
+        return m + ':' + (sec < 10 ? '0' : '') + sec;
       }
 
-      // 把长文本按句号切分成小段（移动端单次朗读有长度限制）
-      function splitText(text, maxLen) {
-        var parts = [];
-        var sentences = text.split(/(?<=[。！？；])/);
-        var buf = '';
-        for (var i = 0; i < sentences.length; i++) {
-          if ((buf + sentences[i]).length > maxLen) {
-            if (buf) parts.push(buf);
-            buf = sentences[i];
-          } else {
-            buf += sentences[i];
-          }
-        }
-        if (buf) parts.push(buf);
-        return parts;
-      }
-
-      if (audioBtn && window.speechSynthesis) {
+      if (audioBtn && audioEl) {
         audioBtn.addEventListener('click', function () {
-          if (isPlaying) {
-            window.speechSynthesis.cancel();
-            isPlaying = false;
+          if (audioEl.paused) {
+            audioEl.play();
+            audioBtn.classList.add('playing');
+            audioBar.classList.add('show');
+          } else {
+            audioEl.pause();
             audioBtn.classList.remove('playing');
-            return;
           }
-          // 收集历史内容文本
-          var content = document.querySelector('.history-content');
-          if (!content) return;
-          var paras = content.querySelectorAll('.h-intro, section p, section h3');
-          var fullText = '';
-          for (var i = 0; i < paras.length; i++) {
-            var t = paras[i].textContent.trim();
-            if (t) { fullText += t + '。'; }
+        });
+
+        audioEl.addEventListener('loadedmetadata', function () {
+          audioDur.textContent = fmtTime(audioEl.duration);
+        });
+
+        audioEl.addEventListener('timeupdate', function () {
+          var pct = (audioEl.currentTime / audioEl.duration) * 100;
+          if (isFinite(pct)) {
+            audioFill.style.width = pct + '%';
+            audioThumb.style.left = pct + '%';
+            audioCur.textContent = fmtTime(audioEl.currentTime);
           }
-          if (!fullText) return;
+        });
 
-          // iOS 需要先 resume
-          if (window.speechSynthesis.paused) {
-            window.speechSynthesis.resume();
+        audioEl.addEventListener('ended', function () {
+          audioBtn.classList.remove('playing');
+          audioEl.currentTime = 0;
+        });
+      }
+
+      // 拖动进度条
+      if (audioTrack && audioEl) {
+        var isDragging = false;
+
+        function seekTo(clientX) {
+          var rect = audioTrack.getBoundingClientRect();
+          var pct = (clientX - rect.left) / rect.width;
+          if (pct < 0) pct = 0;
+          if (pct > 1) pct = 1;
+          audioEl.currentTime = pct * audioEl.duration;
+          audioFill.style.width = (pct * 100) + '%';
+          audioThumb.style.left = (pct * 100) + '%';
+          audioCur.textContent = fmtTime(audioEl.currentTime);
+        }
+
+        audioTrack.addEventListener('mousedown', function (e) {
+          isDragging = true;
+          seekTo(e.clientX);
+        });
+        document.addEventListener('mousemove', function (e) {
+          if (isDragging) seekTo(e.clientX);
+        });
+        document.addEventListener('mouseup', function () {
+          isDragging = false;
+        });
+
+        // 触摸支持
+        audioTrack.addEventListener('touchstart', function (e) {
+          isDragging = true;
+          seekTo(e.touches[0].clientX);
+        });
+        document.addEventListener('touchmove', function (e) {
+          if (isDragging) {
+            e.preventDefault();
+            seekTo(e.touches[0].clientX);
           }
-          window.speechSynthesis.cancel();
-
-          var chunks = splitText(fullText, 180);
-          var idx = 0;
-
-          function speakNext() {
-            if (idx >= chunks.length) {
-              isPlaying = false;
-              audioBtn.classList.remove('playing');
-              return;
-            }
-            var utter = new SpeechSynthesisUtterance(chunks[idx]);
-            utter.lang = 'zh-CN';
-            utter.rate = 0.95;
-            utter.pitch = 1.0;
-            if (zhVoice) { utter.voice = zhVoice; }
-            utter.onend = function () {
-              idx++;
-              speakNext();
-            };
-            utter.onerror = function () {
-              // 出错也继续下一段，避免整段卡死
-              idx++;
-              speakNext();
-            };
-            window.speechSynthesis.speak(utter);
-          }
-
-          isPlaying = true;
-          audioBtn.classList.add('playing');
-          speakNext();
+        }, { passive: false });
+        document.addEventListener('touchend', function () {
+          isDragging = false;
         });
       }
 
